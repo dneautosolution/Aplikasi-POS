@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SalesPro Kelompok 6 - Responsive POS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght={300;400;500;600;700}&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://unpkg.com/html5-qrcode"></script>
     
@@ -124,7 +124,7 @@
         .item-actions .btn { padding: 8px; border-radius: 6px; }
 
         .stock-counter { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-        .stock-counter input { width: 50px; text-align: center; margin: 0; padding: 6px; font-weight: bold; font-size: 13px; border-radius: 6px; }
+        .stock-counter input { width: 55px; text-align: center; margin: 0; padding: 6px; font-weight: bold; font-size: 13px; border-radius: 6px; border: 1px solid #ccc; }
         .stock-counter i { cursor: pointer; font-size: 24px; user-select: none; }
 
         /* POS / KASIR - FLEXIBLE SPLIT VIEW */
@@ -151,6 +151,12 @@
         .modal-box { background: white; padding: 20px; border-radius: 12px; width: 100%; max-width: 440px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; }
         
+        /* INPUT WA COMPONENT WITH ERASE BUTTON */
+        .wa-input-container { position: relative; width: 100%; display: flex; align-items: center; margin-top: 5px; margin-bottom: 15px; }
+        .wa-input-container input { margin: 0; padding-right: 40px; }
+        .wa-input-container .clear-wa-btn { position: absolute; right: 12px; color: var(--grey-color); cursor: pointer; user-select: none; font-size: 20px; }
+        .wa-input-container .clear-wa-btn:hover { color: var(--danger-color); }
+
         /* RECEIPT / STRUK */
         .receipt-paper { background: #fff; padding: 15px; font-family: monospace; font-size: 12px; color: #000; line-height: 1.4; border: 1px dashed #777; margin: 0 auto; width: 100%; max-width: 300px; }
         .receipt-divider { border-top: 1px dashed #000; margin: 8px 0; }
@@ -432,7 +438,6 @@
     </div>
 
     <script>
-        // --- 1. SEED SEBAGAI DATA AWAL JIKA LOCALSTORAGE KOSONG ---
         const seedProducts = [
             {id: "P001", sku: "899123456001", name: "Kopi Hitam", cost: 9000, price: 15000, stock: 20},
             {id: "P002", sku: "899123456002", name: "Teh Manis", cost: 2500, price: 5000, stock: 50},
@@ -443,7 +448,6 @@
         ];
         const seedConfig = { name: "Toko Kelompok 6", admin: "Admin Utama", address: "Jl. Sains Teknologi No. 6, Purwokerto", email: "kelompok6@salespro.com", password: "admin123", phone: "081234567890", npwp: "12.345.678.9-012.000", logo: "" };
 
-        // --- 2. AMBIL DATA DARI LOCALSTORAGE ---
         let globalProducts = JSON.parse(localStorage.getItem('products')) || seedProducts;
         let globalTransactions = JSON.parse(localStorage.getItem('transactions')) || seedTransactions;
         let storeConfig = JSON.parse(localStorage.getItem('storeConfig')) || seedConfig;
@@ -451,12 +455,10 @@
         let html5QrcodeScanner = null;
         let tempLogoBase64 = "";
 
-        // Fungsi pembantu enkapsulasi untuk update data secara realtime
         function updateStorage(key, data) { 
             localStorage.setItem(key, JSON.stringify(data)); 
         }
 
-        // --- 3. FUNGSI AUTH (LOGIN & REGISTER) ---
         function togglePasswordVisibility(inputId, iconEl) {
             let p = document.getElementById(inputId);
             p.type = p.type === "password" ? "text" : "password";
@@ -534,7 +536,6 @@
             }
         }
 
-        // --- 4. NAVIGATION & DRAWERS ---
         function toggleSidebar(open) {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebar-overlay');
@@ -562,7 +563,6 @@
             if(idx===5) { document.getElementById('page-settings').classList.remove('hidden'); loadSettings(); }
         }
 
-        // --- 5. FORMAT UTILITY ---
         function formatRupiah(n) { return 'Rp ' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
         function cleanNumber(str) { return parseInt(str.toString().replace(/[^\d]/g, '')) || 0; }
         function formatRupiahInput(input) {
@@ -570,7 +570,6 @@
             input.value = v === "" ? "" : parseInt(v).toLocaleString('id-ID');
         }
 
-        // --- 6. LOGO MANAGER ---
         function previewLogo(input) {
             const file = input.files[0];
             if (file) {
@@ -585,6 +584,15 @@
                     document.getElementById('settings-logo-preview').innerHTML = `<img src="${tempLogoBase64}" style="width:100%; height:100%; object-fit:contain; border-radius:50%;">`;
                 };
                 reader.readAsDataURL(file);
+            }
+        }
+
+        function inputStock(id, val) {
+            let p = globalProducts.find(x => x.id === id);
+            if(p) {
+                p.stock = Math.max(0, parseInt(val) || 0);
+                updateStorage('products', globalProducts);
+                renderStockManagement();
             }
         }
 
@@ -607,14 +615,12 @@
             }
         }
 
-        // --- 7. INITIALIZE APP DATA ---
         function syncDynamicStoreNames() {
             document.querySelectorAll('.dynamic-store-name-view').forEach(el => el.innerText = storeConfig.name);
             if(document.getElementById('side-store-name')) document.getElementById('side-store-name').innerText = storeConfig.name;
             if(document.getElementById('mob-store-name')) document.getElementById('mob-store-name').innerText = storeConfig.name;
         }
 
-        // --- 8. DASHBOARD SYSTEM ---
         function getFilteredTx() {
             const f = document.getElementById('dash-filter-select').value;
             const now = new Date();
@@ -649,9 +655,7 @@
             renderDashboard();
         }
 
-        // --- GENERAL CAMERA SCANNER MODAL VIEW (POS, PRODUCT LIST, STOCK) ---
         function openScannerModalForPage(targetPage) {
-            // Pengecekan Protokol Keamanan HTTPS / Localhost
             if (window.location.protocol === 'file:') {
                 alert("Fitur kamera barcode membutuhkan protokol HTTPS/Localhost.\n\nKarena Anda membuka file HTML secara langsung (file:///), kamera diblokir browser. Silakan ketik manual kode SKU/Barcode produk di kolom pencarian.");
                 return;
@@ -706,9 +710,7 @@
                             alert(`Produk dengan Barcode "${code}" tidak ditemukan.`);
                         }
                     }
-                }, (error) => {
-                    // Mencegah konsol log eror penjelajahan frame penuh
-                });
+                }, (error) => {});
             } catch (e) {
                 alert("Gagal memuat sistem kamera. Pastikan izin kamera diberikan.");
                 closeModal();
@@ -753,7 +755,6 @@
             openModal(html);
         }
 
-        // --- 9. PRODUCT MANAGEMENT ---
         function renderProducts() {
             let q = document.getElementById('product-search').value.toLowerCase();
             let html = '';
@@ -781,7 +782,7 @@
                 </div>
 
                 <label style="font-size:12px; font-weight:600;">Nama Barang</label>
-                <input type="text" id="f-name" placeholder="Nama lengkap produk" value="${p.name}">
+                <input type="text" id="f-name" placeholder="Nama lengkap... " value="${p.name}">
                 <label style="font-size:12px; font-weight:600;">Harga Modal (HPP)</label><input type="text" id="f-cost" placeholder="Rp" value="${p.cost ? p.cost.toLocaleString('id-ID') : ''}" oninput="formatRupiahInput(this)">
                 <label style="font-size:12px; font-weight:600;">Harga Jual</label><input type="text" id="f-price" placeholder="Rp" value="${p.price ? p.price.toLocaleString('id-ID') : ''}" oninput="formatRupiahInput(this)">
                 <div class="modal-actions">
@@ -791,7 +792,6 @@
             openModal(html);
         }
 
-        // Fungsi Membuka Scanner Khusus Input Kolom SKU Modal Tambah Produk
         function openScannerForInputProduct() {
             if (window.location.protocol === 'file:') {
                 alert("Fitur kamera barcode membutuhkan protokol HTTPS/Localhost.\n\nKarena Anda membuka file HTML secara langsung (file:///), kamera diblokir browser. Silakan ketik manual kode SKU produk.");
@@ -854,7 +854,6 @@
             delete window.tempProductInputData;
         }
 
-        // VALIDASI UNTUK MENCEGAH DOUBLE SKU
         function saveProduct(id) {
             let sku = document.getElementById('f-sku').value.trim() || "SKU-" + Date.now();
             let name = document.getElementById('f-name').value.trim();
@@ -863,7 +862,6 @@
             
             if(!name) return alert('Nama wajib diisi!');
 
-            // Cek apakah SKU sudah dipakai oleh produk LAIN
             let isDuplicateSku = globalProducts.some(p => p.sku.toLowerCase() === sku.toLowerCase() && p.id !== id);
             if (isDuplicateSku) {
                 return alert(`Eror: SKU/Barcode "${sku}" sudah terdaftar untuk produk lain! Gunakan kode SKU unik.`);
@@ -888,7 +886,6 @@
             } 
         }
 
-        // --- 10. CASHIER COUNTER (POS) ---
         function renderPOS() { renderPosProducts(); renderCart(); }
         function renderPosProducts() {
             let q = document.getElementById('pos-search').value.toLowerCase();
@@ -925,6 +922,22 @@
             renderCart();
         }
 
+        function updateCartQty(idx, value) {
+            let item = cart[idx];
+            let p = globalProducts.find(x => x.id === item.id);
+            let parsedVal = parseInt(value) || 0;
+
+            if (parsedVal <= 0) {
+                cart.splice(idx, 1);
+            } else if (parsedVal > p.stock) {
+                alert(`Stok di gudang tidak mencukupi! Maksimal pembelian adalah ${p.stock}.`);
+                item.qty = p.stock;
+            } else {
+                item.qty = parsedVal;
+            }
+            renderCart();
+        }
+
         function renderCart() {
             let html = '';
             cart.forEach((item, idx) => {
@@ -933,7 +946,7 @@
                     <div class="receipt-row" style="margin-top:8px; align-items:center;"><span>${formatRupiah(item.price)}</span>
                         <div class="stock-counter">
                             <i class="material-icons" style="color:var(--grey-color);" onclick="adjustCart(${idx},-1)">remove_circle_outline</i>
-                            <input type="text" value="${item.qty}" readonly>
+                            <input type="number" min="0" value="${item.qty}" onchange="updateCartQty(${idx}, this.value)">
                             <i class="material-icons" style="color:var(--primary-color);" onclick="adjustCart(${idx},1)">add_circle_outline</i>
                         </div>
                     </div>
@@ -986,6 +999,7 @@
             renderPOS();
         }
 
+        // --- FIXED: Menambahkan tombol hapus (X) pada input WA & Header Struk memuat data toko lengkap ---
         function showReceipt(tx) {
             let items = tx.items.map(i => `<div class="receipt-row"><span>${i.name} x${i.qty}</span><span>${formatRupiah(i.price*i.qty)}</span></div>`).join('');
             let receiptLogoHtml = storeConfig.logo ? `<center><img src="${storeConfig.logo}" class="receipt-logo-img"></center>` : '';
@@ -993,7 +1007,12 @@
             let html = `
                 <div class="receipt-paper" id="thermal-receipt">
                     ${receiptLogoHtml}
-                    <center><strong>${storeConfig.name}</strong><p style="font-size:10px; color:#555;">${storeConfig.address}</p></center>
+                    <center>
+                        <strong>${storeConfig.name.toUpperCase()}</strong>
+                        <p style="font-size:10px; color:#444; margin-top:2px; max-width:240px; margin-left:auto; margin-right:auto;">${storeConfig.address}</p>
+                        <p style="font-size:10px; color:#444;">Telp/WA: ${storeConfig.phone || '-'}</p>
+                        <p style="font-size:10px; color:#444;">NPWP: ${storeConfig.npwp || '-'}</p>
+                    </center>
                     <div class="receipt-divider"></div>
                     <div class="receipt-row"><span>Invoice:</span><span>${tx.id}</span></div>
                     <div class="receipt-row"><span>Metode:</span><span>${tx.paymentMethod}</span></div>
@@ -1004,11 +1023,66 @@
                     <div class="receipt-row"><span>BAYAR:</span><span>${formatRupiah(tx.cashAmount)}</span></div>
                     <div class="receipt-row"><span>KEMBALI:</span><span>${formatRupiah(tx.changeAmount)}</span></div>
                 </div>
-                <div class="modal-actions" style="flex-wrap:wrap; justify-content:center; width:100%;">
-                    <button class="btn btn-danger" style="flex:1;" onclick="closeModal()">Tutup</button>
-                    <button class="btn btn-primary" style="flex:1;" onclick="realPrint()"><i class="material-icons">print</i>Cetak</button>
+                
+                <div style="margin-top:15px; text-align:left; width:100%;">
+                    <label style="font-size:12px; font-weight:600; color:#555;">Kirim Struk ke WhatsApp Pelanggan:</label>
+                    <div class="wa-input-container">
+                        <input type="text" id="popup-wa-number" placeholder="Contoh: 08123456789">
+                        <span class="material-icons clear-wa-btn" onclick="document.getElementById('popup-wa-number').value = ''">cancel</span>
+                    </div>
+                </div>
+
+                <div class="modal-actions" style="flex-wrap:wrap; justify-content:center; width:100%; gap: 8px;">
+                    <button class="btn btn-danger" style="flex:1; min-width:80px;" onclick="closeModal()">Tutup</button>
+                    <button class="btn btn-primary" style="flex:1; min-width:80px;" onclick="realPrint()"><i class="material-icons">print</i>Cetak</button>
+                    <button class="btn btn-success" style="flex:1.5; min-width:140px; background-color: #25D366;" onclick="shareToWhatsApp(JSON.parse(this.dataset.tx))" id="btn-share-wa">
+                        <i class="material-icons">share</i>Kirim via WA
+                    </button>
                 </div>`;
             openModal(html);
+            document.getElementById('btn-share-wa').dataset.tx = JSON.stringify(tx);
+        }
+
+        function shareToWhatsApp(tx) {
+            let phoneNumber = document.getElementById('popup-wa-number').value.trim();
+            if (!phoneNumber) {
+                alert("Mohon masukkan nomor WhatsApp pelanggan terlebih dahulu!");
+                return;
+            }
+            
+            phoneNumber = phoneNumber.replace(/[^\d]/g, '');
+            if (phoneNumber.startsWith('0')) {
+                phoneNumber = '62' + phoneNumber.slice(1);
+            }
+            if (!phoneNumber || phoneNumber.length < 9) {
+                alert("Format nomor telepon tidak valid!");
+                return;
+            }
+
+            let textText = `*${storeConfig.name.toUpperCase()}*\n`;
+            textText += `${storeConfig.address}\n`;
+            textText += `Telp/WA: ${storeConfig.phone}\n`;
+            textText += `NPWP: ${storeConfig.npwp}\n`;
+            textText += `=========================\n`;
+            textText += `*No. Invoice :* ${tx.id}\n`;
+            textText += `*Tanggal     :* ${tx.date}\n`;
+            textText += `*Metode      :* ${tx.paymentMethod}\n`;
+            textText += `=========================\n\n`;
+            
+            tx.items.forEach((i, index) => {
+                textText += `${index + 1}. *${i.name}*\n`;
+                textText += `   ${i.qty} x ${formatRupiah(i.price)} = ${formatRupiah(i.price * i.qty)}\n`;
+            });
+            
+            textText += `\n=========================\n`;
+            textText += `*TOTAL BELANJA : ${formatRupiah(tx.total)}*\n`;
+            textText += `Tunai/Bayar  : ${formatRupiah(tx.cashAmount)}\n`;
+            textText += `Kembalian    : ${formatRupiah(tx.changeAmount)}\n`;
+            textText += `=========================\n\n`;
+            textText += `_Terima kasih atas kunjungan Anda!_`;
+
+            let url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(textText)}`;
+            window.location.href = url;
         }
 
         function realPrint() {
@@ -1017,7 +1091,6 @@
             document.getElementById('print-section-area').innerHTML = '';
         }
 
-        // --- 12. GUDANG / MANAGEMENT STOK ---
         function renderStockManagement() {
             let q = document.getElementById('stock-search').value.toLowerCase();
             let html = '';
@@ -1043,7 +1116,6 @@
             }
         }
 
-        // --- 13. SETTINGS SYSTEM ---
         function loadSettings() {
             document.getElementById('set-store-name').value = storeConfig.name;
             document.getElementById('set-admin-name').value = storeConfig.admin;
@@ -1078,7 +1150,6 @@
             alert("Pengaturan berhasil disimpan secara permanen!");
         }
 
-        // --- 14. RIWAYAT TRANSAKSI VIEW ---
         function renderHistory() {
             let q = document.getElementById('history-search').value.toLowerCase();
             let html = '';
@@ -1091,7 +1162,6 @@
             document.getElementById('history-list').innerHTML = html || '<center style="padding:20px; color:#aaa;">Riwayat kosong</center>';
         }
 
-        // --- 15. POPUP SYSTEM ---
         function openModal(html) { 
             document.getElementById('modal-content').innerHTML = `<div class="modal-box">${html}</div>`; 
             document.getElementById('modal-container').classList.remove('hidden'); 
@@ -1100,7 +1170,6 @@
             document.getElementById('modal-container').classList.add('hidden'); 
         }
         
-        // --- 16. RUN SYNC TAMPILAN AWAL SEBELUM LOGIN ---
         if(storeConfig) {
             syncDynamicStoreNames();
         }
