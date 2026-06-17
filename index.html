@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SalesPro Kelompok 6 - Responsive POS</title>
-    <!-- Google Fonts Poppins & Material Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- HTML5 QR Code Scanner Library untuk Scan Barcode Nyata -->
     <script src="https://unpkg.com/html5-qrcode"></script>
     
     <style>
@@ -188,14 +186,11 @@
 </head>
 <body>
 
-    <!-- Area Khusus Cetak Struk Sistem -->
     <div id="print-section-area"></div>
 
-    <!-- ================= HALAMAN AUTH: LOGIN & REGISTRASI ================= -->
     <div id="login-page">
         <div class="auth-container">
             
-            <!-- SUB-KARTU 1: FORM LOGIN -->
             <div id="auth-login-card" class="login-card">
                 <div class="login-logo-container-class">
                     <i class="material-icons logo-placeholder">storefront</i>
@@ -221,7 +216,6 @@
                 </div>
             </div>
 
-            <!-- SUB-KARTU 2: FORM REGISTER (BUAT AKUN) -->
             <div id="auth-register-card" class="login-card hidden">
                 <div class="login-logo-container-class">
                     <i class="material-icons logo-placeholder" style="color: var(--success-color)">add_business</i>
@@ -260,10 +254,8 @@
         </div>
     </div>
 
-    <!-- ================= LAYOUT APLIKASI UTAMA ================= -->
     <div id="main-layout" class="hidden">
         
-        <!-- Mobile Navigation Bar Header -->
         <div class="mobile-header">
             <div class="mobile-brand">
                 <div id="mobile-logo-container" style="display:flex; align-items:center;">
@@ -276,10 +268,8 @@
             </button>
         </div>
 
-        <!-- Sidebar Background Blur Overlay for Mobile -->
         <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar(false)"></div>
 
-        <!-- Sidebar Component -->
         <div id="sidebar">
             <div class="sidebar-header">
                 <button class="close-sidebar-btn" onclick="toggleSidebar(false)">
@@ -301,9 +291,7 @@
             </ul>
         </div>
 
-        <!-- Main Content Responsive Area -->
         <div id="content-area">
-            <!-- PAGE 0: DASHBOARD -->
             <div id="page-dashboard" class="page-component">
                 <div class="page-title" id="dash-welcome">Halo, Admin Utama!</div>
                 <div class="page-subtitle" id="dash-store-name">Nama Toko: Toko Kelompok 6</div>
@@ -351,7 +339,6 @@
                 </div>
             </div>
 
-            <!-- PAGE 1: RIWAYAT TRANSAKSI -->
             <div id="page-history" class="page-component hidden">
                 <div class="page-title">Riwayat Transaksi</div>
                 <div class="page-subtitle">Daftar semua penjualan kasir terpusat</div>
@@ -359,23 +346,24 @@
                 <div id="history-list" class="list-container"></div>
             </div>
 
-            <!-- PAGE 2: MANAJEMEN PRODUK -->
             <div id="page-product" class="page-component hidden">
                 <div class="page-title">Manajemen Produk</div>
                 <div class="page-subtitle">Kelola nama produk, SKU, harga modal (HPP) dan jual</div>
-                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <div class="search-bar" style="margin:0;"><i class="material-icons">search</i><input type="text" id="product-search" placeholder="Cari nama atau barcode..." oninput="renderProducts()"></div>
-                    <button class="btn btn-primary" onclick="openProductModal()"><i class="material-icons">add</i>Tambah</button>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                    <button class="btn btn-primary" style="width:100%" onclick="openScannerModalForPage('product')"><i class="material-icons">qr_code_scanner</i>Scan Barcode Produk</button>
+                    <div style="display: flex; gap: 10px; width: 100%;">
+                        <div class="search-bar" style="margin:0; flex-grow: 1;"><i class="material-icons">search</i><input type="text" id="product-search" placeholder="Cari nama atau barcode..." oninput="renderProducts()"></div>
+                        <button class="btn btn-primary" style="flex-shrink: 0;" onclick="openProductModal()"><i class="material-icons">add</i>Tambah</button>
+                    </div>
                 </div>
                 <div id="product-list" class="list-container"></div>
             </div>
 
-            <!-- PAGE 3: KASIR / POS -->
             <div id="page-pos" class="page-component hidden">
                 <div class="pos-grid">
                     <div class="pos-products">
                         <div style="display: flex; flex-direction:column; gap: 10px; margin-bottom: 15px;">
-                            <button class="btn btn-primary" style="width:100%" onclick="openScannerModal()"><i class="material-icons">qr_code_scanner</i>Buka Kamera Scan Barcode</button>
+                            <button class="btn btn-primary" style="width:100%" onclick="openScannerModalForPage('pos')"><i class="material-icons">qr_code_scanner</i>Buka Kamera Scan Barcode</button>
                             <div class="search-bar" style="margin:0;"><i class="material-icons">search</i><input type="text" id="pos-search" placeholder="Ketik nama produk / SKU..." oninput="renderPosProducts()"></div>
                         </div>
                         <div class="products-grid" id="pos-products-grid"></div>
@@ -401,15 +389,16 @@
                 </div>
             </div>
 
-            <!-- PAGE 4: MANAJEMEN STOK -->
             <div id="page-stock" class="page-component hidden">
                 <div class="page-title">Manajemen Stok Gudang</div>
                 <div class="page-subtitle">Tambah atau kurangi jumlah persediaan produk secara real-time</div>
-                <div class="search-bar"><i class="material-icons">search</i><input type="text" id="stock-search" placeholder="Cari produk..." oninput="renderStockManagement()"></div>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                    <button class="btn btn-primary" style="width:100%" onclick="openScannerModalForPage('stock')"><i class="material-icons">qr_code_scanner</i>Scan Barcode Cari Stok</button>
+                    <div class="search-bar" style="margin: 0;"><i class="material-icons">search</i><input type="text" id="stock-search" placeholder="Cari produk..." oninput="renderStockManagement()"></div>
+                </div>
                 <div id="stock-list" class="list-container"></div>
             </div>
 
-            <!-- PAGE 5: PENGATURAN -->
             <div id="page-settings" class="page-component hidden">
                 <div class="page-title">Pengaturan Aplikasi</div>
                 <div class="page-subtitle">Konfigurasi profil toko dan upload logo</div>
@@ -438,14 +427,10 @@
         </div>
     </div>
 
-    <!-- WINDOW MODAL -->
     <div id="modal-container" class="modal-overlay hidden">
         <div id="modal-content"></div>
     </div>
 
-    <!-- ==========================================================================
-       LOGIKA JAVASCRIPT
-       ========================================================================== -->
     <script>
         // --- 1. SEED SEBAGAI DATA AWAL JIKA LOCALSTORAGE KOSONG ---
         const seedProducts = [
@@ -502,7 +487,6 @@
                 return alert("Password minimal terdiri dari 6 karakter!");
             }
 
-            // Buat objek konfigurasi baru
             storeConfig = {
                 name: storeName,
                 admin: adminName,
@@ -514,7 +498,6 @@
                 logo: ""
             };
 
-            // Reset data produk & transaksi ke kosong agar toko baru tidak memakai data bibit toko lama
             globalProducts = [];
             globalTransactions = [];
 
@@ -524,11 +507,9 @@
 
             alert("Pendaftaran Berhasil! Silakan masuk menggunakan email dan password baru Anda.");
             
-            // Masukkan data ke form login secara otomatis
             document.getElementById('login-email').value = email;
             document.getElementById('login-password').value = password;
             
-            // Sinkronkan nama teks pada view login
             syncDynamicStoreNames();
             switchAuthCard('login');
         }
@@ -633,14 +614,6 @@
             if(document.getElementById('mob-store-name')) document.getElementById('mob-store-name').innerText = storeConfig.name;
         }
 
-        function initApp() {
-            syncDynamicStoreNames();
-            document.getElementById('dash-store-name').innerText = "Nama Toko: " + storeConfig.name;
-            document.getElementById('dash-welcome').innerText = "Halo, " + storeConfig.admin + "!";
-            applyLogoUI();
-            renderDashboard();
-        }
-
         // --- 8. DASHBOARD SYSTEM ---
         function getFilteredTx() {
             const f = document.getElementById('dash-filter-select').value;
@@ -668,6 +641,86 @@
             if(document.getElementById('stat-counttx')) document.getElementById('stat-counttx').innerText = txs.length;
         }
 
+        function initApp() {
+            syncDynamicStoreNames();
+            document.getElementById('dash-store-name').innerText = "Nama Toko: " + storeConfig.name;
+            document.getElementById('dash-welcome').innerText = "Halo, " + storeConfig.admin + "!";
+            applyLogoUI();
+            renderDashboard();
+        }
+
+        // --- GENERAL CAMERA SCANNER MODAL VIEW (POS, PRODUCT LIST, STOCK) ---
+        function openScannerModalForPage(targetPage) {
+            // Pengecekan Protokol Keamanan HTTPS / Localhost
+            if (window.location.protocol === 'file:') {
+                alert("Fitur kamera barcode membutuhkan protokol HTTPS/Localhost.\n\nKarena Anda membuka file HTML secara langsung (file:///), kamera diblokir browser. Silakan ketik manual kode SKU/Barcode produk di kolom pencarian.");
+                return;
+            }
+
+            let titleText = "Scan Barcode";
+            if (targetPage === 'pos') titleText = "Scan Barcode (Kasir)";
+            if (targetPage === 'product') titleText = "Scan Barcode (Manajemen Produk)";
+            if (targetPage === 'stock') titleText = "Scan Barcode (Cari Stok)";
+
+            let html = `
+                <h3>${titleText}</h3><hr style="margin:10px 0;">
+                <div id="interactive-scanner-viewport" style="width: 100%; background: #000; border-radius:8px; overflow:hidden;"></div>
+                <div class="modal-actions"><button class="btn btn-danger" style="width:100%;" onclick="stopScanner()">Tutup Kamera</button></div>`;
+            openModal(html);
+
+            try {
+                html5QrcodeScanner = new Html5QrcodeScanner("interactive-scanner-viewport", { fps: 10, qrbox: 220 });
+                html5QrcodeScanner.render((decodedText) => {
+                    let code = decodedText.trim();
+                    let p = globalProducts.find(x => x.sku === code);
+
+                    if (targetPage === 'pos') {
+                        if(p) {
+                            addToCart(p.id);
+                            alert(`Berhasil ditambah ke keranjang: ${p.name}`);
+                            stopScanner();
+                        } else {
+                            alert(`SKU/Barcode "${code}" belum terdaftar.`);
+                        }
+                    } 
+                    else if (targetPage === 'product') {
+                        document.getElementById('product-search').value = code;
+                        renderProducts();
+                        stopScanner();
+                        if(p) {
+                            openProductModal(p.id);
+                        } else {
+                            if(confirm(`Barcode "${code}" belum terdaftar. Ingin menambah produk baru dengan SKU ini?`)) {
+                                openProductModal();
+                                setTimeout(() => {
+                                    if(document.getElementById('f-sku')) document.getElementById('f-sku').value = code;
+                                }, 200);
+                            }
+                        }
+                    } 
+                    else if (targetPage === 'stock') {
+                        document.getElementById('stock-search').value = code;
+                        renderStockManagement();
+                        stopScanner();
+                        if(!p) {
+                            alert(`Produk dengan Barcode "${code}" tidak ditemukan.`);
+                        }
+                    }
+                }, (error) => {
+                    // Mencegah konsol log eror penjelajahan frame penuh
+                });
+            } catch (e) {
+                alert("Gagal memuat sistem kamera. Pastikan izin kamera diberikan.");
+                closeModal();
+            }
+        }
+
+        function stopScanner() {
+            if(html5QrcodeScanner) {
+                html5QrcodeScanner.clear().then(() => { closeModal(); }).catch(err => { closeModal(); });
+            } else { closeModal(); }
+        }
+
         function exportCSV() {
             const txs = getFilteredTx();
             if(txs.length === 0) { alert("Tidak ada data untuk diexport!"); return; }
@@ -687,7 +740,8 @@
         }
 
         function showDashboardDetail(title) {
-            let html = `<h3>Detail ${title}</h3><hr style="margin: 10px 0;"><div style="max-height:250px; overflow-y:auto;">`;
+            let html = `
+                <h3>Detail ${title}</h3><hr style="margin: 10px 0;"><div style="max-height:250px; overflow-y:auto;">`;
             if(title === 'Total Omset' || title === 'Total Transaksi') {
                 getFilteredTx().forEach(t => { html += `<div class='receipt-row' style="padding:4px 0;"><span>${t.id} (${t.date})</span><b>${formatRupiah(t.total)}</b></div>`; });
             } else if(title === 'Stok Menipis') {
@@ -719,8 +773,15 @@
             let p = globalProducts.find(x => x.id === id) || {sku:'', name:'', cost:'', price:''};
             let html = `
                 <h3>${id ? 'Edit Produk' : 'Tambah Produk'}</h3><hr style="margin:10px 0;">
-                <label style="font-size:12px; font-weight:600;">SKU / Barcode</label><input type="text" id="f-sku" placeholder="Contoh: 8991234..." value="${p.sku}">
-                <label style="font-size:12px; font-weight:600;">Nama Barang</label><input type="text" id="f-name" placeholder="Nama lengkap produk" value="${p.name}">
+                
+                <label style="font-size:12px; font-weight:600;">SKU / Barcode</label>
+                <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                    <input type="text" id="f-sku" placeholder="Contoh: 8991234..." value="${p.sku}" style="margin:0; flex-grow: 1;">
+                    <button class="btn btn-primary" style="flex-shrink:0; padding: 0 12px;" onclick="openScannerForInputProduct()"><i class="material-icons">qr_code_scanner</i>Scan SKU</button>
+                </div>
+
+                <label style="font-size:12px; font-weight:600;">Nama Barang</label>
+                <input type="text" id="f-name" placeholder="Nama lengkap produk" value="${p.name}">
                 <label style="font-size:12px; font-weight:600;">Harga Modal (HPP)</label><input type="text" id="f-cost" placeholder="Rp" value="${p.cost ? p.cost.toLocaleString('id-ID') : ''}" oninput="formatRupiahInput(this)">
                 <label style="font-size:12px; font-weight:600;">Harga Jual</label><input type="text" id="f-price" placeholder="Rp" value="${p.price ? p.price.toLocaleString('id-ID') : ''}" oninput="formatRupiahInput(this)">
                 <div class="modal-actions">
@@ -730,14 +791,85 @@
             openModal(html);
         }
 
+        // Fungsi Membuka Scanner Khusus Input Kolom SKU Modal Tambah Produk
+        function openScannerForInputProduct() {
+            if (window.location.protocol === 'file:') {
+                alert("Fitur kamera barcode membutuhkan protokol HTTPS/Localhost.\n\nKarena Anda membuka file HTML secara langsung (file:///), kamera diblokir browser. Silakan ketik manual kode SKU produk.");
+                return;
+            }
+
+            let currentId = document.querySelector(".modal-box h3").innerText.includes("Edit") ? 
+                            (globalProducts.find(x => x.name === document.getElementById('f-name').value)?.id || 'null') : 'null';
+            
+            window.tempProductInputData = {
+                id: currentId,
+                name: document.getElementById('f-name').value,
+                cost: document.getElementById('f-cost').value,
+                price: document.getElementById('f-price').value
+            };
+
+            let html = `
+                <h3>Scan Barcode Produk</h3><hr style="margin:10px 0;">
+                <div id="interactive-scanner-viewport" style="width: 100%; background: #000; border-radius:8px; overflow:hidden;"></div>
+                <div class="modal-actions">
+                    <button class="btn btn-danger" style="width:100%;" onclick="backToProductModal()">Kembali</button>
+                </div>`;
+            
+            document.getElementById('modal-content').innerHTML = `<div class="modal-box">${html}</div>`;
+
+            try {
+                html5QrcodeScanner = new Html5QrcodeScanner("interactive-scanner-viewport", { fps: 10, qrbox: 220 });
+                html5QrcodeScanner.render((decodedText) => {
+                    let code = decodedText.trim();
+                    if(html5QrcodeScanner) {
+                        html5QrcodeScanner.clear().then(() => { proceedBarcodeToForm(code); }).catch(() => { proceedBarcodeToForm(code); });
+                    }
+                }, (error) => {});
+            } catch (e) {
+                alert("Gagal memuat sistem kamera.");
+                restoreFormWithoutChange();
+            }
+        }
+
+        function proceedBarcodeToForm(code) {
+            openProductModal(window.tempProductInputData.id !== 'null' ? window.tempProductInputData.id : null);
+            document.getElementById('f-sku').value = code;
+            document.getElementById('f-name').value = window.tempProductInputData.name;
+            document.getElementById('f-cost').value = window.tempProductInputData.cost;
+            document.getElementById('f-price').value = window.tempProductInputData.price;
+            delete window.tempProductInputData;
+        }
+
+        function backToProductModal() {
+            if(html5QrcodeScanner) {
+                html5QrcodeScanner.clear().then(() => { restoreFormWithoutChange(); }).catch(() => { restoreFormWithoutChange(); });
+            } else { restoreFormWithoutChange(); }
+        }
+
+        function restoreFormWithoutChange() {
+            openProductModal(window.tempProductInputData.id !== 'null' ? window.tempProductInputData.id : null);
+            document.getElementById('f-name').value = window.tempProductInputData.name;
+            document.getElementById('f-cost').value = window.tempProductInputData.cost;
+            document.getElementById('f-price').value = window.tempProductInputData.price;
+            delete window.tempProductInputData;
+        }
+
+        // VALIDASI UNTUK MENCEGAH DOUBLE SKU
         function saveProduct(id) {
-            let sku = document.getElementById('f-sku').value || "SKU-" + Date.now();
-            let name = document.getElementById('f-name').value;
+            let sku = document.getElementById('f-sku').value.trim() || "SKU-" + Date.now();
+            let name = document.getElementById('f-name').value.trim();
             let cost = cleanNumber(document.getElementById('f-cost').value);
             let price = cleanNumber(document.getElementById('f-price').value);
+            
             if(!name) return alert('Nama wajib diisi!');
 
-            if(id && id !== 'null') {
+            // Cek apakah SKU sudah dipakai oleh produk LAIN
+            let isDuplicateSku = globalProducts.some(p => p.sku.toLowerCase() === sku.toLowerCase() && p.id !== id);
+            if (isDuplicateSku) {
+                return alert(`Eror: SKU/Barcode "${sku}" sudah terdaftar untuk produk lain! Gunakan kode SKU unik.`);
+            }
+
+            if(id && id !== 'null' && id !== 'undefined') {
                 let p = globalProducts.find(x => x.id === id);
                 if(p) { p.sku = sku; p.name = name; p.cost = cost; p.price = price; }
             } else {
@@ -784,6 +916,15 @@
             renderCart();
         }
 
+        function adjustCart(idx, d) {
+            let item = cart[idx];
+            let p = globalProducts.find(x => x.id === item.id);
+            if(d > 0 && p.stock <= item.qty) return alert("Stok sudah mencapai batas maksimal gudang!");
+            item.qty += d;
+            if(item.qty <= 0) cart.splice(idx, 1);
+            renderCart();
+        }
+
         function renderCart() {
             let html = '';
             cart.forEach((item, idx) => {
@@ -802,15 +943,6 @@
             let total = cart.reduce((s, i) => s + (i.price*i.qty), 0);
             document.getElementById('cart-total-view').innerText = formatRupiah(total);
             calculateChange();
-        }
-
-        function adjustCart(idx, d) {
-            let item = cart[idx];
-            let p = globalProducts.find(x => x.id === item.id);
-            if(d > 0 && p.stock <= item.qty) return alert("Stok sudah mencapai batas maksimal gudang!");
-            item.qty += d;
-            if(item.qty <= 0) cart.splice(idx, 1);
-            renderCart();
         }
 
         function togglePaymentFields() {
@@ -885,33 +1017,6 @@
             document.getElementById('print-section-area').innerHTML = '';
         }
 
-        // --- 11. BARCODE SCANNER CONTROLLER ---
-        function openScannerModal() {
-            let html = `
-                <h3>Scan Barcode Kamera</h3><hr style="margin:10px 0;">
-                <div id="interactive-scanner-viewport" style="width: 100%; background: #000; border-radius:8px; overflow:hidden;"></div>
-                <div class="modal-actions"><button class="btn btn-danger" style="width:100%;" onclick="stopScanner()">Tutup Kamera</button></div>`;
-            openModal(html);
-
-            html5QrcodeScanner = new Html5QrcodeScanner("interactive-scanner-viewport", { fps: 10, qrbox: 220 });
-            html5QrcodeScanner.render((decodedText) => {
-                let p = globalProducts.find(x => x.sku === decodedText.trim());
-                if(p) {
-                    addToCart(p.id);
-                    alert(`Berhasil ditambah: ${p.name}`);
-                    stopScanner();
-                } else {
-                    alert(`SKU/Barcode "${decodedText}" belum terdaftar.`);
-                }
-            });
-        }
-
-        function stopScanner() {
-            if(html5QrcodeScanner) {
-                html5QrcodeScanner.clear().then(() => { closeModal(); }).catch(err => { closeModal(); });
-            } else { closeModal(); }
-        }
-
         // --- 12. GUDANG / MANAGEMENT STOK ---
         function renderStockManagement() {
             let q = document.getElementById('stock-search').value.toLowerCase();
@@ -933,15 +1038,6 @@
             let p = globalProducts.find(x => x.id === id);
             if(p) {
                 p.stock = Math.max(0, p.stock + d); 
-                updateStorage('products', globalProducts); 
-                renderStockManagement();
-            }
-        }
-
-        function inputStock(id, v) {
-            let p = globalProducts.find(x => x.id === id);
-            if(p) {
-                p.stock = Math.max(0, parseInt(v) || 0); 
                 updateStorage('products', globalProducts); 
                 renderStockManagement();
             }
