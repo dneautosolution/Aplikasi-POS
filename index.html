@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SalesPro Kelompok 6 - Responsive POS</title>
+    <!-- Google Fonts Poppins & Material Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- HTML5 QR Code Scanner Library untuk Scan Barcode Nyata -->
     <script src="https://unpkg.com/html5-qrcode"></script>
     
     <style>
@@ -46,12 +48,16 @@
         .logo-placeholder { font-size: 55px; color: var(--primary-color); display: block; margin: 0 auto 10px; text-align: center; }
         .receipt-logo-img { width: 50px; height: 50px; object-fit: contain; margin-bottom: 5px; }
 
-        /* LOGIN PAGE */
-        #login-page { display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: var(--primary-light); padding: 20px; }
-        .login-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); width: 100%; max-width: 400px; text-align: center; }
-        .login-card h2 { color: var(--primary-color); margin: 10px 0 5px; font-size: 22px; }
+        /* LOGIN & REGISTER PAGE NEW MODERN DESIGN */
+        #login-page { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%); padding: 20px; }
+        .auth-container { width: 100%; max-width: 420px; position: relative; }
+        .login-card { background: white; padding: 35px 30px; border-radius: 24px; box-shadow: 0 12px 32px rgba(0,0,0,0.06); text-align: center; transition: all 0.3s ease; }
+        .login-card h2 { color: var(--primary-color); margin: 10px 0 5px; font-size: 24px; font-weight: 700; }
         .password-field { position: relative; }
-        .password-field span { position: absolute; right: 12px; top: 38px; cursor: pointer; color: var(--grey-color); }
+        .password-field span { position: absolute; right: 12px; top: 16px; cursor: pointer; color: var(--grey-color); }
+        .auth-switch-text { font-size: 13px; margin-top: 20px; color: var(--grey-color); }
+        .auth-switch-text a { color: var(--primary-color); text-decoration: none; font-weight: 600; cursor: pointer; }
+        .auth-switch-text a:hover { text-decoration: underline; }
 
         /* MAIN LAYOUT RESPONSIVE */
         #main-layout { display: flex; flex-direction: column; min-height: 100vh; }
@@ -110,7 +116,7 @@
         .search-bar i { position: absolute; left: 12px; top: 14px; color: var(--grey-color); }
         .search-bar input { padding-left: 40px; margin: 0; }
 
-        /* LIST & CARDS VIEW (Ideal for Mobile and Desktop) */
+        /* LIST & CARDS VIEW */
         .list-container { display: flex; flex-direction: column; gap: 10px; }
         .item-card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
         .item-info { flex-grow: 1; min-width: 0; }
@@ -152,7 +158,7 @@
         .receipt-divider { border-top: 1px dashed #000; margin: 8px 0; }
         .receipt-row { display: flex; justify-content: space-between; gap: 5px; }
 
-        /* MEDIA PRINT (Khusus Cetak Struk) */
+        /* MEDIA PRINT */
         @media print {
             body * { visibility: hidden; }
             #print-section-area, #print-section-area * { visibility: visible; }
@@ -170,10 +176,8 @@
             #content-area { padding-left: calc(var(--sidebar-width) + 25px); padding-top: 25px; }
             .page-title { font-size: 26px; }
             
-            /* Stats on Desktop */
             .stats-grid { grid-template-columns: repeat(6, 1fr); gap: 18px; }
             
-            /* Split layout for POS on Desktop */
             .pos-grid { flex-direction: row; align-items: flex-start; }
             .pos-products { flex: 1; min-width: 0; }
             .products-grid { max-height: calc(100vh - 180px); grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
@@ -184,35 +188,82 @@
 </head>
 <body>
 
+    <!-- Area Khusus Cetak Struk Sistem -->
     <div id="print-section-area"></div>
 
+    <!-- ================= HALAMAN AUTH: LOGIN & REGISTRASI ================= -->
     <div id="login-page">
-        <div id="login-container">
-            <div class="login-card">
-                <div id="login-logo-container">
+        <div class="auth-container">
+            
+            <!-- SUB-KARTU 1: FORM LOGIN -->
+            <div id="auth-login-card" class="login-card">
+                <div class="login-logo-container-class">
                     <i class="material-icons logo-placeholder">storefront</i>
                 </div>
-                <h2 id="log-store-name">Toko Kelompok 6</h2>
+                <h2 class="dynamic-store-name-view">Toko Kelompok 6</h2>
                 <p style="font-size: 13px; color: var(--grey-color); margin-bottom: 15px;">Sistem Kasir & Manajemen Stok POS</p>
                 <hr style="margin-bottom: 20px; border: 0; border-top: 1px solid #eee;">
                 
                 <div style="text-align: left;">
-                    <label style="font-size: 13px; font-weight:600;">Email Pengguna</label>
+                    <label style="font-size: 13px; font-weight:600; color:#555;">Email Pengguna</label>
                     <input type="email" id="login-email" placeholder="Masukkan email" value="kelompok6@salespro.com">
                     
-                    <label style="font-size: 13px; font-weight:600;">Kata Sandi</label>
+                    <label style="font-size: 13px; font-weight:600; color:#555;">Kata Sandi</label>
                     <div class="password-field">
                         <input type="password" id="login-password" placeholder="Masukkan password" value="admin123">
-                        <span class="material-icons" id="toggle-pwd" onclick="togglePasswordVisibility()">visibility_off</span>
+                        <span class="material-icons" id="toggle-pwd" onclick="togglePasswordVisibility('login-password', this)">visibility_off</span>
                     </div>
                 </div>
                 <button class="btn btn-primary" style="width:100%; margin-top:10px; height:45px;" onclick="handleLogin()">MASUK KE AKUN</button>
+                
+                <div class="auth-switch-text">
+                    Belum punya akun toko? <a onclick="switchAuthCard('register')">Buat Akun Baru</a>
+                </div>
             </div>
+
+            <!-- SUB-KARTU 2: FORM REGISTER (BUAT AKUN) -->
+            <div id="auth-register-card" class="login-card hidden">
+                <div class="login-logo-container-class">
+                    <i class="material-icons logo-placeholder" style="color: var(--success-color)">add_business</i>
+                </div>
+                <h2>Daftar Akun Toko</h2>
+                <p style="font-size: 13px; color: var(--grey-color); margin-bottom: 15px;">Mulai kelola bisnis Anda dengan mudah</p>
+                <hr style="margin-bottom: 20px; border: 0; border-top: 1px solid #eee;">
+                
+                <div style="text-align: left; max-height: 330px; overflow-y: auto; padding-right: 5px; margin-bottom: 15px;">
+                    <label style="font-size: 12px; font-weight:600; color:#555;">Nama Toko / Bisnis</label>
+                    <input type="text" id="reg-store-name" placeholder="Contoh: Toko Berkah Jaya">
+                    
+                    <label style="font-size: 12px; font-weight:600; color:#555;">Nama Pemilik / Admin</label>
+                    <input type="text" id="reg-admin-name" placeholder="Nama Lengkap Anda">
+                    
+                    <label style="font-size: 12px; font-weight:600; color:#555;">Alamat Email Baru</label>
+                    <input type="email" id="reg-email" placeholder="Contoh: admin@tokosaya.com">
+                    
+                    <label style="font-size: 12px; font-weight:600; color:#555;">Buat Kata Sandi</label>
+                    <div class="password-field">
+                        <input type="password" id="reg-password" placeholder="Minimal 6 karakter">
+                        <span class="material-icons" id="toggle-reg-pwd" onclick="togglePasswordVisibility('reg-password', this)">visibility_off</span>
+                    </div>
+                    
+                    <label style="font-size: 12px; font-weight:600; color:#555;">Alamat Fisik Toko</label>
+                    <input type="text" id="reg-address" placeholder="Nama Jalan, Kota">
+                </div>
+                
+                <button class="btn btn-success" style="width:100%; height:45px;" onclick="handleRegisterStore()">DAFTARKAN TOKO SAYA</button>
+                
+                <div class="auth-switch-text">
+                    Sudah memiliki akun? <a onclick="switchAuthCard('login')">Masuk di sini</a>
+                </div>
+            </div>
+
         </div>
     </div>
 
+    <!-- ================= LAYOUT APLIKASI UTAMA ================= -->
     <div id="main-layout" class="hidden">
         
+        <!-- Mobile Navigation Bar Header -->
         <div class="mobile-header">
             <div class="mobile-brand">
                 <div id="mobile-logo-container" style="display:flex; align-items:center;">
@@ -225,8 +276,10 @@
             </button>
         </div>
 
+        <!-- Sidebar Background Blur Overlay for Mobile -->
         <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar(false)"></div>
 
+        <!-- Sidebar Component -->
         <div id="sidebar">
             <div class="sidebar-header">
                 <button class="close-sidebar-btn" onclick="toggleSidebar(false)">
@@ -248,7 +301,9 @@
             </ul>
         </div>
 
+        <!-- Main Content Responsive Area -->
         <div id="content-area">
+            <!-- PAGE 0: DASHBOARD -->
             <div id="page-dashboard" class="page-component">
                 <div class="page-title" id="dash-welcome">Halo, Admin Utama!</div>
                 <div class="page-subtitle" id="dash-store-name">Nama Toko: Toko Kelompok 6</div>
@@ -296,6 +351,7 @@
                 </div>
             </div>
 
+            <!-- PAGE 1: RIWAYAT TRANSAKSI -->
             <div id="page-history" class="page-component hidden">
                 <div class="page-title">Riwayat Transaksi</div>
                 <div class="page-subtitle">Daftar semua penjualan kasir terpusat</div>
@@ -303,6 +359,7 @@
                 <div id="history-list" class="list-container"></div>
             </div>
 
+            <!-- PAGE 2: MANAJEMEN PRODUK -->
             <div id="page-product" class="page-component hidden">
                 <div class="page-title">Manajemen Produk</div>
                 <div class="page-subtitle">Kelola nama produk, SKU, harga modal (HPP) dan jual</div>
@@ -313,6 +370,7 @@
                 <div id="product-list" class="list-container"></div>
             </div>
 
+            <!-- PAGE 3: KASIR / POS -->
             <div id="page-pos" class="page-component hidden">
                 <div class="pos-grid">
                     <div class="pos-products">
@@ -343,6 +401,7 @@
                 </div>
             </div>
 
+            <!-- PAGE 4: MANAJEMEN STOK -->
             <div id="page-stock" class="page-component hidden">
                 <div class="page-title">Manajemen Stok Gudang</div>
                 <div class="page-subtitle">Tambah atau kurangi jumlah persediaan produk secara real-time</div>
@@ -350,6 +409,7 @@
                 <div id="stock-list" class="list-container"></div>
             </div>
 
+            <!-- PAGE 5: PENGATURAN -->
             <div id="page-settings" class="page-component hidden">
                 <div class="page-title">Pengaturan Aplikasi</div>
                 <div class="page-subtitle">Konfigurasi profil toko dan upload logo</div>
@@ -378,12 +438,16 @@
         </div>
     </div>
 
+    <!-- WINDOW MODAL -->
     <div id="modal-container" class="modal-overlay hidden">
         <div id="modal-content"></div>
     </div>
 
+    <!-- ==========================================================================
+       LOGIKA JAVASCRIPT
+       ========================================================================== -->
     <script>
-        // --- SEED SEBAGAI DATA AWAL JIKA LOCALSTORAGE KOSONG ---
+        // --- 1. SEED SEBAGAI DATA AWAL JIKA LOCALSTORAGE KOSONG ---
         const seedProducts = [
             {id: "P001", sku: "899123456001", name: "Kopi Hitam", cost: 9000, price: 15000, stock: 20},
             {id: "P002", sku: "899123456002", name: "Teh Manis", cost: 2500, price: 5000, stock: 50},
@@ -394,7 +458,7 @@
         ];
         const seedConfig = { name: "Toko Kelompok 6", admin: "Admin Utama", address: "Jl. Sains Teknologi No. 6, Purwokerto", email: "kelompok6@salespro.com", password: "admin123", phone: "081234567890", npwp: "12.345.678.9-012.000", logo: "" };
 
-        // --- AMBIL DATA NYATA DARI LOCALSTORAGE ---
+        // --- 2. AMBIL DATA DARI LOCALSTORAGE ---
         let globalProducts = JSON.parse(localStorage.getItem('products')) || seedProducts;
         let globalTransactions = JSON.parse(localStorage.getItem('transactions')) || seedTransactions;
         let storeConfig = JSON.parse(localStorage.getItem('storeConfig')) || seedConfig;
@@ -402,10 +466,94 @@
         let html5QrcodeScanner = null;
         let tempLogoBase64 = "";
 
-        // Fungsi enkapsulasi bawaan untuk write data secara realtime
-        function updateStorage(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+        // Fungsi pembantu enkapsulasi untuk update data secara realtime
+        function updateStorage(key, data) { 
+            localStorage.setItem(key, JSON.stringify(data)); 
+        }
 
-        // --- MOBILE SIDEBAR DRAWER CONTROLLER ---
+        // --- 3. FUNGSI AUTH (LOGIN & REGISTER) ---
+        function togglePasswordVisibility(inputId, iconEl) {
+            let p = document.getElementById(inputId);
+            p.type = p.type === "password" ? "text" : "password";
+            iconEl.innerText = p.type === "password" ? "visibility_off" : "visibility";
+        }
+
+        function switchAuthCard(type) {
+            if (type === 'register') {
+                document.getElementById('auth-login-card').classList.add('hidden');
+                document.getElementById('auth-register-card').classList.remove('hidden');
+            } else {
+                document.getElementById('auth-register-card').classList.add('hidden');
+                document.getElementById('auth-login-card').classList.remove('hidden');
+            }
+        }
+
+        function handleRegisterStore() {
+            let storeName = document.getElementById('reg-store-name').value.trim();
+            let adminName = document.getElementById('reg-admin-name').value.trim();
+            let email = document.getElementById('reg-email').value.trim();
+            let password = document.getElementById('reg-password').value;
+            let address = document.getElementById('reg-address').value.trim();
+
+            if (!storeName || !adminName || !email || !password) {
+                return alert("Mohon lengkapi semua data wajib (Nama Toko, Pemilik, Email, dan Password)!");
+            }
+            if (password.length < 6) {
+                return alert("Password minimal terdiri dari 6 karakter!");
+            }
+
+            // Buat objek konfigurasi baru
+            storeConfig = {
+                name: storeName,
+                admin: adminName,
+                address: address || "Alamat belum diatur",
+                email: email,
+                password: password,
+                phone: "-",
+                npwp: "-",
+                logo: ""
+            };
+
+            // Reset data produk & transaksi ke kosong agar toko baru tidak memakai data bibit toko lama
+            globalProducts = [];
+            globalTransactions = [];
+
+            updateStorage('storeConfig', storeConfig);
+            updateStorage('products', globalProducts);
+            updateStorage('transactions', globalTransactions);
+
+            alert("Pendaftaran Berhasil! Silakan masuk menggunakan email dan password baru Anda.");
+            
+            // Masukkan data ke form login secara otomatis
+            document.getElementById('login-email').value = email;
+            document.getElementById('login-password').value = password;
+            
+            // Sinkronkan nama teks pada view login
+            syncDynamicStoreNames();
+            switchAuthCard('login');
+        }
+
+        function handleLogin() {
+            let e = document.getElementById('login-email').value.trim();
+            let p = document.getElementById('login-password').value;
+            if(e === storeConfig.email && p === storeConfig.password) {
+                document.getElementById('login-page').classList.add('hidden');
+                document.getElementById('main-layout').classList.remove('hidden');
+                initApp();
+            } else { 
+                alert("Email atau password salah!"); 
+            }
+        }
+
+        function handleLogout() {
+            if(confirm("Keluar dari sistem?")) {
+                document.getElementById('main-layout').classList.add('hidden');
+                document.getElementById('login-page').classList.remove('hidden');
+                applyLogoUI();
+            }
+        }
+
+        // --- 4. NAVIGATION & DRAWERS ---
         function toggleSidebar(open) {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebar-overlay');
@@ -418,7 +566,22 @@
             }
         }
 
-        // --- FORMAT RUPIAH ---
+        function switchPage(idx, el) {
+            document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
+            el.classList.add('active');
+            document.querySelectorAll('.page-component').forEach(p => p.classList.add('hidden'));
+            
+            toggleSidebar(false); 
+
+            if(idx===0) { document.getElementById('page-dashboard').classList.remove('hidden'); renderDashboard(); }
+            if(idx===1) { document.getElementById('page-history').classList.remove('hidden'); renderHistory(); }
+            if(idx===2) { document.getElementById('page-product').classList.remove('hidden'); renderProducts(); }
+            if(idx===3) { document.getElementById('page-pos').classList.remove('hidden'); renderPOS(); }
+            if(idx===4) { document.getElementById('page-stock').classList.remove('hidden'); renderStockManagement(); }
+            if(idx===5) { document.getElementById('page-settings').classList.remove('hidden'); loadSettings(); }
+        }
+
+        // --- 5. FORMAT UTILITY ---
         function formatRupiah(n) { return 'Rp ' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
         function cleanNumber(str) { return parseInt(str.toString().replace(/[^\d]/g, '')) || 0; }
         function formatRupiahInput(input) {
@@ -426,7 +589,7 @@
             input.value = v === "" ? "" : parseInt(v).toLocaleString('id-ID');
         }
 
-        // --- PREVIEW LOGO TOKO (CONVERT TO BASE64) ---
+        // --- 6. LOGO MANAGER ---
         function previewLogo(input) {
             const file = input.files[0];
             if (file) {
@@ -444,71 +607,41 @@
             }
         }
 
-        // --- UPDATE LOGO IN ALL UI PLACES ---
         function applyLogoUI() {
-            const loginLogoCont = document.getElementById('login-logo-container');
+            const loginLogoConts = document.querySelectorAll('.login-logo-container-class');
             const sideLogoCont = document.getElementById('sidebar-logo-container');
             const mobLogoCont = document.getElementById('mobile-logo-container');
             
-            if (storeConfig.logo) {
-                if(loginLogoCont) loginLogoCont.innerHTML = `<img src="${storeConfig.logo}" class="store-logo-img" alt="Logo">`;
+            if (storeConfig && storeConfig.logo) {
+                loginLogoConts.forEach(el => el.innerHTML = `<img src="${storeConfig.logo}" class="store-logo-img" alt="Logo">`);
                 if(sideLogoCont) sideLogoCont.innerHTML = `<img src="${storeConfig.logo}" class="store-logo-img" alt="Logo">`;
                 if(mobLogoCont) mobLogoCont.innerHTML = `<img src="${storeConfig.logo}" style="width:32px; height:32px; object-fit:contain; border-radius:50%;" alt="Logo">`;
             } else {
-                if(loginLogoCont) loginLogoCont.innerHTML = `<i class="material-icons logo-placeholder">storefront</i>`;
+                loginLogoConts.forEach((el, i) => {
+                    if(i === 1) el.innerHTML = `<i class="material-icons logo-placeholder" style="color: var(--success-color)">add_business</i>`;
+                    else el.innerHTML = `<i class="material-icons logo-placeholder">storefront</i>`;
+                });
                 if(sideLogoCont) sideLogoCont.innerHTML = `<i class="material-icons logo-placeholder">storefront</i>`;
                 if(mobLogoCont) mobLogoCont.innerHTML = `<i class="material-icons" style="color:var(--primary-color);">storefront</i>`;
             }
         }
 
-        // --- LOGIN & ROUTING ---
-        function togglePasswordVisibility() {
-            let p = document.getElementById('login-password');
-            p.type = p.type === "password" ? "text" : "password";
-            document.getElementById('toggle-pwd').innerText = p.type === "password" ? "visibility_off" : "visibility";
-        }
-        function handleLogin() {
-            let e = document.getElementById('login-email').value.trim();
-            let p = document.getElementById('login-password').value;
-            if(e === storeConfig.email && p === storeConfig.password) {
-                document.getElementById('login-page').classList.add('hidden');
-                document.getElementById('main-layout').classList.remove('hidden');
-                initApp();
-            } else { alert("Email atau password salah!"); }
-        }
-        function handleLogout() {
-            if(confirm("Keluar dari sistem?")) {
-                document.getElementById('main-layout').classList.add('hidden');
-                document.getElementById('login-page').classList.remove('hidden');
-                applyLogoUI();
-            }
-        }
-        function switchPage(idx, el) {
-            document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
-            el.classList.add('active');
-            document.querySelectorAll('.page-component').forEach(p => p.classList.add('hidden'));
-            
-            toggleSidebar(false); 
-
-            if(idx===0) { document.getElementById('page-dashboard').classList.remove('hidden'); renderDashboard(); }
-            if(idx===1) { document.getElementById('page-history').classList.remove('hidden'); renderHistory(); }
-            if(idx===2) { document.getElementById('page-product').classList.remove('hidden'); renderProducts(); }
-            if(idx===3) { document.getElementById('page-pos').classList.remove('hidden'); renderPOS(); }
-            if(idx===4) { document.getElementById('page-stock').classList.remove('hidden'); renderStockManagement(); }
-            if(idx===5) { document.getElementById('page-settings').classList.remove('hidden'); loadSettings(); }
+        // --- 7. INITIALIZE APP DATA ---
+        function syncDynamicStoreNames() {
+            document.querySelectorAll('.dynamic-store-name-view').forEach(el => el.innerText = storeConfig.name);
+            if(document.getElementById('side-store-name')) document.getElementById('side-store-name').innerText = storeConfig.name;
+            if(document.getElementById('mob-store-name')) document.getElementById('mob-store-name').innerText = storeConfig.name;
         }
 
         function initApp() {
-            document.getElementById('log-store-name').innerText = storeConfig.name;
-            document.getElementById('side-store-name').innerText = storeConfig.name;
-            document.getElementById('mob-store-name').innerText = storeConfig.name;
+            syncDynamicStoreNames();
             document.getElementById('dash-store-name').innerText = "Nama Toko: " + storeConfig.name;
             document.getElementById('dash-welcome').innerText = "Halo, " + storeConfig.admin + "!";
             applyLogoUI();
             renderDashboard();
         }
 
-        // ================= DASHBOARD & REAL EXPORT =================
+        // --- 8. DASHBOARD SYSTEM ---
         function getFilteredTx() {
             const f = document.getElementById('dash-filter-select').value;
             const now = new Date();
@@ -520,17 +653,19 @@
                 return false;
             });
         }
+
         function renderDashboard() {
             const txs = getFilteredTx();
             let omzet = txs.reduce((s, t) => s + t.total, 0);
             let modal = txs.reduce((s, t) => s + t.totalCost, 0);
             let untung = omzet - modal;
-            document.getElementById('stat-omzet').innerText = formatRupiah(omzet);
-            document.getElementById('stat-untung').innerText = formatRupiah(untung);
-            document.getElementById('stat-margin').innerText = omzet > 0 ? ((untung/omzet)*100).toFixed(1) + "%" : "0%";
-            document.getElementById('stat-lowstock').innerText = globalProducts.filter(p => p.stock < 5).length + " Item";
-            document.getElementById('stat-allproducts').innerText = globalProducts.length;
-            document.getElementById('stat-counttx').innerText = txs.length;
+            
+            if(document.getElementById('stat-omzet')) document.getElementById('stat-omzet').innerText = formatRupiah(omzet);
+            if(document.getElementById('stat-untung')) document.getElementById('stat-untung').innerText = formatRupiah(untung);
+            if(document.getElementById('stat-margin')) document.getElementById('stat-margin').innerText = omzet > 0 ? ((untung/omzet)*100).toFixed(1) + "%" : "0%";
+            if(document.getElementById('stat-lowstock')) document.getElementById('stat-lowstock').innerText = globalProducts.filter(p => p.stock < 5).length + " Item";
+            if(document.getElementById('stat-allproducts')) document.getElementById('stat-allproducts').innerText = globalProducts.length;
+            if(document.getElementById('stat-counttx')) document.getElementById('stat-counttx').innerText = txs.length;
         }
 
         function exportCSV() {
@@ -564,7 +699,7 @@
             openModal(html);
         }
 
-        // ================= MASTER PRODUK =================
+        // --- 9. PRODUCT MANAGEMENT ---
         function renderProducts() {
             let q = document.getElementById('product-search').value.toLowerCase();
             let html = '';
@@ -579,6 +714,7 @@
             });
             document.getElementById('product-list').innerHTML = html || '<center style="padding:20px; color:#aaa;">Produk tidak ditemukan</center>';
         }
+
         function openProductModal(id = null) {
             let p = globalProducts.find(x => x.id === id) || {sku:'', name:'', cost:'', price:''};
             let html = `
@@ -593,6 +729,7 @@
                 </div>`;
             openModal(html);
         }
+
         function saveProduct(id) {
             let sku = document.getElementById('f-sku').value || "SKU-" + Date.now();
             let name = document.getElementById('f-name').value;
@@ -610,6 +747,7 @@
             closeModal(); 
             renderProducts();
         }
+
         function deleteProduct(id) { 
             if(confirm("Hapus produk ini?")) { 
                 globalProducts = globalProducts.filter(x => x.id !== id); 
@@ -618,7 +756,7 @@
             } 
         }
 
-        // ================= KASIR (POS) & CETAK STRUK NYATA =================
+        // --- 10. CASHIER COUNTER (POS) ---
         function renderPOS() { renderPosProducts(); renderCart(); }
         function renderPosProducts() {
             let q = document.getElementById('pos-search').value.toLowerCase();
@@ -637,6 +775,7 @@
             });
             document.getElementById('pos-products-grid').innerHTML = html;
         }
+
         function addToCart(id) {
             let p = globalProducts.find(x => x.id === id);
             let item = cart.find(x => x.id === id);
@@ -644,6 +783,7 @@
             if(item) item.qty++; else cart.push({...p, qty: 1});
             renderCart();
         }
+
         function renderCart() {
             let html = '';
             cart.forEach((item, idx) => {
@@ -663,6 +803,7 @@
             document.getElementById('cart-total-view').innerText = formatRupiah(total);
             calculateChange();
         }
+
         function adjustCart(idx, d) {
             let item = cart[idx];
             let p = globalProducts.find(x => x.id === item.id);
@@ -671,15 +812,18 @@
             if(item.qty <= 0) cart.splice(idx, 1);
             renderCart();
         }
+
         function togglePaymentFields() {
             document.getElementById('cash-fields').style.display = document.getElementById('pos-payment-method').value === 'Cash' ? 'block' : 'none';
         }
+
         function calculateChange() {
             let total = cart.reduce((s, i) => s + (i.price*i.qty), 0);
             let cash = cleanNumber(document.getElementById('cart-cash-input').value);
             let change = cash - total;
             document.getElementById('cart-change-view').innerText = change >= 0 ? formatRupiah(change) : "Rp 0 (Kurang)";
         }
+
         function processPayment() {
             if(cart.length === 0) return alert("Keranjang belanja masih kosong!");
             let total = cart.reduce((s, i) => s + (i.price*i.qty), 0);
@@ -705,7 +849,9 @@
             updateStorage('transactions', globalTransactions);
             
             showReceipt(tx);
-            cart = []; document.getElementById('cart-cash-input').value = ''; renderPOS();
+            cart = []; 
+            document.getElementById('cart-cash-input').value = ''; 
+            renderPOS();
         }
 
         function showReceipt(tx) {
@@ -732,13 +878,14 @@
                 </div>`;
             openModal(html);
         }
+
         function realPrint() {
             document.getElementById('print-section-area').innerHTML = document.getElementById('thermal-receipt').outerHTML;
             window.print();
             document.getElementById('print-section-area').innerHTML = '';
         }
 
-        // ================= SCANNER BARCODE KAMERA ASLI =================
+        // --- 11. BARCODE SCANNER CONTROLLER ---
         function openScannerModal() {
             let html = `
                 <h3>Scan Barcode Kamera</h3><hr style="margin:10px 0;">
@@ -758,13 +905,14 @@
                 }
             });
         }
+
         function stopScanner() {
             if(html5QrcodeScanner) {
                 html5QrcodeScanner.clear().then(() => { closeModal(); }).catch(err => { closeModal(); });
             } else { closeModal(); }
         }
 
-        // ================= MANAJEMEN STOK =================
+        // --- 12. GUDANG / MANAGEMENT STOK ---
         function renderStockManagement() {
             let q = document.getElementById('stock-search').value.toLowerCase();
             let html = '';
@@ -780,6 +928,7 @@
             });
             document.getElementById('stock-list').innerHTML = html || '<center style="padding:20px; color:#aaa;">Produk kosong</center>';
         }
+
         function changeStock(id, d) {
             let p = globalProducts.find(x => x.id === id);
             if(p) {
@@ -788,6 +937,7 @@
                 renderStockManagement();
             }
         }
+
         function inputStock(id, v) {
             let p = globalProducts.find(x => x.id === id);
             if(p) {
@@ -797,7 +947,7 @@
             }
         }
 
-        // ================= PENGATURAN =================
+        // --- 13. SETTINGS SYSTEM ---
         function loadSettings() {
             document.getElementById('set-store-name').value = storeConfig.name;
             document.getElementById('set-admin-name').value = storeConfig.admin;
@@ -815,6 +965,7 @@
             }
             document.getElementById('set-store-logo').value = "";
         }
+
         function saveSettings() {
             storeConfig = {
                 name: document.getElementById('set-store-name').value,
@@ -831,7 +982,7 @@
             alert("Pengaturan berhasil disimpan secara permanen!");
         }
 
-        // ================= LOG RIWAYAT =================
+        // --- 14. RIWAYAT TRANSAKSI VIEW ---
         function renderHistory() {
             let q = document.getElementById('history-search').value.toLowerCase();
             let html = '';
@@ -844,10 +995,19 @@
             document.getElementById('history-list').innerHTML = html || '<center style="padding:20px; color:#aaa;">Riwayat kosong</center>';
         }
 
-        // ================= LAYER POPUP MODAL =================
-        function openModal(html) { document.getElementById('modal-content').innerHTML = `<div class="modal-box">${html}</div>`; document.getElementById('modal-container').classList.remove('hidden'); }
-        function closeModal() { document.getElementById('modal-container').classList.add('hidden'); }
+        // --- 15. POPUP SYSTEM ---
+        function openModal(html) { 
+            document.getElementById('modal-content').innerHTML = `<div class="modal-box">${html}</div>`; 
+            document.getElementById('modal-container').classList.remove('hidden'); 
+        }
+        function closeModal() { 
+            document.getElementById('modal-container').classList.add('hidden'); 
+        }
         
+        // --- 16. RUN SYNC TAMPILAN AWAL SEBELUM LOGIN ---
+        if(storeConfig) {
+            syncDynamicStoreNames();
+        }
         applyLogoUI();
     </script>
 </body>
